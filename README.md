@@ -14,7 +14,7 @@ The model and its budget are declared in [`model.yaml`](model.yaml). On top of t
 | Workflow | Trigger | What it does |
 |---|---|---|
 | [**decide**](.github/workflows/decide.yml) | push to `main` | sweeps the quant ladder (`q8_0`, `q4_k_m`, …) on the Jetson, **picks the best variant** for the `max_quality` profile, and publishes an **Ed25519-signed deployment manifest** as a build artifact |
-| [**validate**](.github/workflows/validate.yml) | pull request | benchmarks the candidate on the Jetson and **fails the PR** if it regresses past the latency/RAM/accuracy budget vs the baseline |
+| [**validate**](.github/workflows/validate.yml) | pull request + daily cron | benchmarks the candidate on the Jetson and **fails the check** if it regresses past the latency/RAM/accuracy budget vs the baseline; on the cron, `only-on-change` skips the device run unless the HF repo has a new revision |
 
 ## See it for yourself
 
@@ -36,13 +36,17 @@ tinyedge decide   <sweep-id> --profile max_quality    # pick the winner + sign t
 
 1. Fork this repo.
 2. Add a repo **secret** `TINYEDGE_API_KEY` (get a key at [tinyedge.ai](https://tinyedge.ai)).
-3. *(for the gate)* create a baseline and store its id as a repo **variable** `TINYEDGE_BASELINE`:
-   ```bash
-   tinyedge run "hf:bartowski/Llama-3.2-1B-Instruct-GGUF/Llama-3.2-1B-Instruct-Q4_K_M.gguf" \
-     --device jetson-orin-nano --watch
-   tinyedge baseline save <job-id> --name v1 && tinyedge baseline list
-   ```
-4. Push a change to `model.yaml`, or trigger **decide** from the Actions tab. A device must be online during the run.
+3. Push a change to `model.yaml`, or trigger **decide** from the Actions tab. A device must be online during the run.
+
+That's it — the first **validate** run saves the baseline automatically; later
+runs compare against it. To pin a specific known-good run as the baseline
+instead, save one and store its id as a repo **variable** `TINYEDGE_BASELINE`:
+
+```bash
+tinyedge run "hf:bartowski/Llama-3.2-1B-Instruct-GGUF/Llama-3.2-1B-Instruct-Q4_K_M.gguf" \
+  --device jetson-orin-nano --watch
+tinyedge baseline save <job-id> --name v1 && tinyedge baseline list
+```
 
 ## Verify the manifest
 
