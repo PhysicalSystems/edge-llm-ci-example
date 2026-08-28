@@ -1,7 +1,7 @@
 # Edge LLM deployment, gated by CI
 
-[![decide](https://github.com/TinyEdgeAI/edge-llm-ci-example/actions/workflows/decide.yml/badge.svg)](../../actions/workflows/decide.yml)
-[![validate](https://github.com/TinyEdgeAI/edge-llm-ci-example/actions/workflows/validate.yml/badge.svg)](../../actions/workflows/validate.yml)
+[![decide](https://github.com/PhysicalSystems/edge-llm-ci-example/actions/workflows/decide.yml/badge.svg)](../../actions/workflows/decide.yml)
+[![validate](https://github.com/PhysicalSystems/edge-llm-ci-example/actions/workflows/validate.yml/badge.svg)](../../actions/workflows/validate.yml)
 
 An example project that ships an on-device LLM (`Llama-3.2-1B`) to a **Jetson Orin Nano** — with [TinyEdge](https://tinyedge.ai) wired into CI so **every change is benchmarked on the real device before it ships.**
 
@@ -25,7 +25,7 @@ On each change, CI reports — measured on the device — which quantized build 
 
 ## How it works under the hood
 
-Both workflows are thin wrappers around the published [`TinyEdgeAI/tinyedge-actions`](https://github.com/TinyEdgeAI/tinyedge-actions) (`@v1`), which run two SDK commands you can also run locally (`pip install tinyedge`):
+Both workflows are thin wrappers around the published [`PhysicalSystems/tinyedge-actions`](https://github.com/PhysicalSystems/tinyedge-actions) (`@v1`), which run two SDK commands you can also run locally (`pip install tinyedge`):
 
 ```
 tinyedge optimize <model> --device jetson-orin-nano   # sweep the ladder on the device
